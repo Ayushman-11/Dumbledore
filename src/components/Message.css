@@ -12,6 +12,7 @@
 /* Assistant messages align left */
 .assistant-message {
     justify-content: flex-start;
+    align-items: flex-start;
 }
 
 /* Message Bubble */
@@ -69,6 +70,7 @@
 /* Assistant message content - parchment style */
 .assistant-message .message-content {
     padding: 0.25rem 0;
+    text-align: left;
 }
 
 /* Parchment texture effect */
@@ -159,6 +161,7 @@
 
 .assistant-inline-content {
     flex: 1;
+    text-align: left;
 }
 
 .assistant-message .message-text h1,
@@ -187,6 +190,7 @@
 /* Error message styling to match AI message bubble */
 .error-message {
     justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .error-message .message-bubble {
@@ -212,6 +216,7 @@
     word-wrap: break-word;
     overflow-wrap: anywhere;
     white-space: pre-line;
+    text-align: left;
 }
 
 .error-message .retry-button {

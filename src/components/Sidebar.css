@@ -1,3 +1,65 @@
+.logo-img {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+    border-radius: 50%;
+    background: #2a0a13;
+    border: 2px solid #cda86a;
+    box-shadow: 0 2px 8px rgba(44, 10, 5, 0.12);
+}
+
+.appbar-logo {
+    margin-right: 0.5rem;
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+    vertical-align: middle;
+    border-radius: 50%;
+    background: #2a0a13;
+    border: 2px solid #cda86a;
+    box-shadow: 0 2px 8px rgba(44, 10, 5, 0.12);
+}
+
+.appbar-logo {
+    margin-right: 0.5rem;
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+.sidebar-logo-img {
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .sidebar-logo-img {
+        display: none;
+    }
+}
+
+.settings-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    background: none;
+    border: none;
+    color: #f8e9c9;
+    font-size: 1rem;
+    padding: 0.7rem 0.5rem;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.18s;
+}
+
+.settings-btn:hover {
+    background: rgba(201, 166, 70, 0.08);
+}
+
 .sidebar {
     width: 280px;
     height: 100vh;

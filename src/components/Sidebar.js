@@ -1,20 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Sidebar.css';
-
+import SettingsModal from './SettingsModal';
+import dumbledoreLogo from '../assets/dumbledore_logo.png';
 /**
  * Sidebar Component
  * Navigation and chat history sidebar
- */
+    */
 function Sidebar({ onNewChat, chatHistory, currentChatId, onSelectChat, isOpen = true, onClose = () => { } }) {
+    const [showSettings, setShowSettings] = useState(false);
+    const [apiKey, setApiKey] = useState(() => localStorage.getItem('openrouter_api_key') || '');
+
+    const handleSaveApiKey = (key) => {
+        setApiKey(key);
+        localStorage.setItem('openrouter_api_key', key);
+        setShowSettings(false);
+        // Optionally: window.location.reload();
+    };
+
     return (
         <div className={`sidebar ${isOpen ? 'open' : ''}`}>
             {/* Logo/Brand */}
             <div className="sidebar-header">
                 <div className="sidebar-logo">
-                    <span className="material-symbols-outlined logo-icon">school</span>
+                    <img src={dumbledoreLogo} alt="Dumbledore Logo" className="logo-img sidebar-logo-img" />
                     <span className="logo-text">Dumbledore</span>
                 </div>
-                {/* Close button removed */}
             </div>
 
             {/* New Chat Button */}
@@ -55,6 +65,19 @@ function Sidebar({ onNewChat, chatHistory, currentChatId, onSelectChat, isOpen =
                     </div>
                 )}
             </div>
+
+            {/* Settings Button at Bottom */}
+            <div className="sidebar-footer">
+                <button className="settings-btn" onClick={() => setShowSettings(true)}>
+                    <span className="material-symbols-outlined">settings</span> Settings
+                </button>
+            </div>
+            <SettingsModal
+                isOpen={showSettings}
+                onClose={() => setShowSettings(false)}
+                onSave={handleSaveApiKey}
+                initialApiKey={apiKey}
+            />
         </div>
     );
 }

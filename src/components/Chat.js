@@ -293,7 +293,7 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
             </div>
 
             {/* Input Area */}
-            <div className="input-container">
+            <div className="input-container" style={{ position: '-webkit-sticky' }}>
                 <div className="input-wrapper">
                     <textarea
                         ref={inputRef}

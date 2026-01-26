@@ -1,0 +1,70 @@
+.settings-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+}
+
+.settings-modal {
+    background: #1b0a0a;
+    color: #f8e9c9;
+    border-radius: 16px;
+    padding: 2rem 2.5rem 1.5rem;
+    min-width: 340px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.settings-modal h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.settings-modal label {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.settings-modal input {
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #cda86a;
+    background: #2a0a13;
+    color: #f8e9c9;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.settings-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.settings-modal-actions button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+    background: #f2ce78;
+    color: #2a0a05;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.settings-modal-actions button:disabled {
+    background: #cda86a;
+    color: #7a5a1a;
+    cursor: not-allowed;
+}

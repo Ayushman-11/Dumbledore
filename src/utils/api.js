@@ -35,7 +35,14 @@ Remember: "Power guided by wisdom protects; power without restraint destroys."
 // Only use OpenRouter API configuration
 const MODEL = process.env.REACT_APP_MODEL;
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
-const API_KEY = process.env.REACT_APP_OPENROUTER_API_KEY;
+function getApiKey() {
+    // Prefer user-set key from localStorage, fallback to .env
+    if (typeof window !== 'undefined') {
+        const userKey = window.localStorage.getItem('openrouter_api_key');
+        if (userKey && userKey.trim()) return userKey.trim();
+    }
+    return process.env.REACT_APP_OPENROUTER_API_KEY;
+}
 
 // Maximum number of messages to keep in history (to avoid token overflow)
 const MAX_HISTORY_LENGTH = 4; // Keep less history to lower token usage per call
@@ -53,6 +60,7 @@ const jitter = () => Math.floor(Math.random() * 400); // Small random jitter to 
  */
 export const sendMessage = async (conversationHistory, userMessage, abortSignal) => {
     // Validate API key
+    const API_KEY = getApiKey();
     if (!API_KEY) {
         throw new Error('API key not configured');
     }

@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Chat from './components/Chat';
 import './App.css';
+import dumbledoreLogo from './assets/dumbledore_logo.png';
 
 const generateChatId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
@@ -178,7 +179,10 @@ function App() {
                     >
                         <span className="material-symbols-outlined">menu</span>
                     </button>
-                    <div className="appbar-title">Dumbledore</div>
+                    <div className="appbar-title">
+                        <img src={dumbledoreLogo} alt="Dumbledore Logo" className="logo-img appbar-logo" />
+                        Dumbledore
+                    </div>
                     {/* <div className="appbar-profile">
                         <span className="appbar-pro">PRO</span>
                         <img className="appbar-avatar" src="/avatar.png" alt="User avatar" />
