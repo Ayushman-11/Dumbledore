@@ -1,0 +1,199 @@
+@media (max-width: 900px) {
+    .appbar {
+        position: sticky;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 52px;
+        background: linear-gradient(90deg, #2d060c 80%, #1a0104 100%);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 0.5rem 0 0.25rem;
+        z-index: 1200;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+        border-bottom: 1px solid rgba(201, 166, 70, 0.13);
+    }
+
+    .appbar-menu {
+        background: none;
+        border: none;
+        color: #f3d3a0;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        margin-right: 0.25rem;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: background 0.18s;
+    }
+
+    .appbar-menu:active {
+        background: rgba(201, 166, 70, 0.08);
+    }
+
+    .appbar-title {
+        color: #f3d3a0;
+        font-size: 1.18rem;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        flex: 1;
+        text-align: left;
+        margin-left: 0.1rem;
+    }
+
+    .appbar-profile {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: auto;
+    }
+
+    .appbar-pro {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #f3d3a0;
+        background: linear-gradient(90deg, #7c2e0b 60%, #d49334 100%);
+        border-radius: 7px;
+        padding: 2px 8px 2px 7px;
+        margin-right: 0.1rem;
+        letter-spacing: 0.04em;
+        border: 1px solid #d49334;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .appbar-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #d49334;
+        box-shadow: 0 0 0 2px #2d060c;
+        background: #fff;
+    }
+}
+
+:root {
+    --scrollbar-track: rgba(255, 255, 255, 0.06);
+    --scrollbar-thumb-base: #78141f;
+    --scrollbar-thumb-highlight: #d49334;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-base) var(--scrollbar-track);
+}
+
+*::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+    border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, var(--scrollbar-thumb-base), var(--scrollbar-thumb-highlight));
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #8f1b26, #eba647);
+}
+
+/* Main App Container */
+.App {
+    min-height: 100vh;
+    display: flex;
+    background: radial-gradient(circle at 25% 15%, #6b0f1a 0%, #300208 38%, #090103 100%);
+    color: #f8f3ec;
+    position: relative;
+}
+
+@media (max-width: 900px) {
+    .App {
+        flex-direction: column;
+    }
+}
+
+.mobile-menu-toggle {
+    position: fixed;
+    top: 1.25rem;
+    left: 1rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    border: 1px solid rgba(201, 166, 70, 0.4);
+    background: rgba(27, 4, 8, 0.92);
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    z-index: 1100;
+    box-shadow: 0 12px 30px rgba(9, 0, 0, 0.45);
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, left 0.3s ease;
+}
+
+.mobile-menu-toggle span {
+    width: 26px;
+    height: 2px;
+    background: #f3d3a0;
+    border-radius: 999px;
+    margin: 0 auto;
+    transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: translateY(4px) rotate(45deg);
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: translateY(-4px) rotate(-45deg);
+}
+
+.mobile-menu-toggle:active {
+    transform: scale(0.96);
+}
+
+@media (max-width: 900px) {
+    .mobile-menu-toggle {
+        display: flex;
+    }
+
+    .mobile-menu-toggle.active {
+        left: calc(min(82vw, 320px) - 3.25rem);
+    }
+}
+
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 0, 0, 0.6);
+    z-index: 900;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@media (min-width: 901px) {
+    .sidebar-overlay {
+        display: none;
+    }
+}

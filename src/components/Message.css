@@ -1,0 +1,210 @@
+/* Message Wrapper */
+.message-wrapper {
+    display: flex;
+    margin: 0.5rem 0;
+}
+
+/* User messages align right */
+.user-message {
+    justify-content: flex-end;
+}
+
+/* Assistant messages align left */
+.assistant-message {
+    justify-content: flex-start;
+}
+
+/* Message Bubble */
+.message-bubble {
+    max-width: 70%;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+/* User message bubble styling */
+.user-message .message-bubble {
+    flex-direction: row-reverse;
+}
+
+/* Assistant inline avatar */
+.assistant-inline-avatar {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
+/* Message Content */
+.message-content {
+    flex: 1;
+    padding: 0;
+    border-radius: 0;
+    position: relative;
+    background: transparent;
+    border: none;
+}
+
+/* User message content - modern dark style */
+.user-message .message-content {
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    background: #2a0a13;
+    /* deep burgundy from Hogwarts palette */
+    border: 1px solid #4a1c1c;
+}
+
+/* Assistant message content - parchment style */
+.assistant-message .message-content {
+    padding: 0.25rem 0;
+}
+
+/* Parchment texture effect */
+.assistant-message .message-content::before {
+    display: none;
+}
+
+/* Message Text */
+.message-text {
+    margin: 0;
+    line-height: 1.7;
+    font-size: 1rem;
+    word-wrap: break-word;
+    color: #e5e5e5;
+}
+
+/* Markdown formatting for chat */
+.message-text p {
+    margin: 0.5em 0;
+}
+
+.message-text ul,
+.message-text ol {
+    margin: 0.5em 0 0.5em 1.5em;
+    padding-left: 1.2em;
+}
+
+.message-text li {
+    margin: 0.25em 0;
+    padding-left: 0.1em;
+}
+
+.message-text strong {
+    font-weight: 700;
+    color: #fffbe6;
+}
+
+.message-text em {
+    font-style: italic;
+    color: #f3d3a0;
+}
+
+.message-text blockquote {
+    border-left: 3px solid #cda86a;
+    margin: 0.5em 0 0.5em 0;
+    padding: 0.5em 1em;
+    color: #e5e5e5;
+    background: rgba(60, 8, 17, 0.12);
+    font-style: italic;
+}
+
+.message-text code {
+    background: #2c0a05;
+    color: #f2ce78;
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    font-size: 0.97em;
+}
+
+.message-text pre {
+    background: #1a0a0a;
+    color: #f2ce78;
+    padding: 0.8em 1em;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 0.7em 0;
+}
+
+.user-message .message-text {
+    color: #f5f5f5;
+}
+
+.assistant-message .message-text {
+    color: #dcdcdc;
+}
+
+.assistant-inline-layout {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.assistant-inline-content {
+    flex: 1;
+}
+
+.assistant-message .message-text h1,
+.assistant-message .message-text h2,
+.assistant-message .message-text h3,
+.assistant-message .message-text h4,
+.assistant-message .message-text h5,
+.assistant-message .message-text h6 {
+    font-size: 1rem;
+    margin: 0.25rem 0;
+    font-weight: 600;
+}
+
+.assistant-message .message-text h2 {
+    font-size: 0.95rem;
+}
+
+.assistant-message .message-text h3,
+.assistant-message .message-text h4,
+.assistant-message .message-text h5,
+.assistant-message .message-text h6 {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Error message styling */
+.error-message .message-content {
+    background: #1b0a0a;
+    border-color: #4a1c1c;
+}
+
+.error-message .message-text {
+    color: #ffb3b3;
+    font-style: italic;
+}
+
+/* Subtle paper edge effect for assistant messages */
+.assistant-message .message-content::after {
+    display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .message-bubble {
+        max-width: 85%;
+    }
+
+    .message-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 1.1rem;
+    }
+
+    .user-message .message-content {
+        padding: 0.875rem 1rem;
+    }
+
+    .assistant-message .message-content {
+        padding: 0.2rem 0;
+    }
+
+    .message-text {
+        font-size: 0.95rem;
+    }
+}

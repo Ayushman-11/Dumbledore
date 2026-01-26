@@ -1,0 +1,161 @@
+/* Base Fluid Glass Component */
+.fluid-glass {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+}
+
+.fluid-glass-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Blur Variants */
+.fluid-glass-blur-light {
+    backdrop-filter: blur(15px) saturate(150%) brightness(1.1);
+    -webkit-backdrop-filter: blur(15px) saturate(150%) brightness(1.1);
+}
+
+.fluid-glass-blur-medium {
+    backdrop-filter: blur(25px) saturate(180%) brightness(1.15);
+    -webkit-backdrop-filter: blur(25px) saturate(180%) brightness(1.15);
+}
+
+.fluid-glass-blur-heavy {
+    backdrop-filter: blur(35px) saturate(220%) brightness(1.2);
+    -webkit-backdrop-filter: blur(35px) saturate(220%) brightness(1.2);
+}
+
+/* Style Variants */
+.fluid-glass-default {
+    background: rgba(30, 10, 50, 0.25);
+    border: 1.5px solid rgba(168, 85, 247, 0.25);
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.fluid-glass-card {
+    background: rgba(30, 10, 50, 0.3);
+    border: 1.5px solid rgba(168, 85, 247, 0.3);
+    box-shadow:
+        0 12px 40px rgba(168, 85, 247, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.fluid-glass-button {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1.5px solid rgba(168, 85, 247, 0.35);
+    box-shadow:
+        0 4px 16px rgba(168, 85, 247, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    padding: 0.75rem 1.5rem;
+}
+
+.fluid-glass-button:hover {
+    background: rgba(168, 85, 247, 0.25);
+    border-color: rgba(168, 85, 247, 0.5);
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 24px rgba(168, 85, 247, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.fluid-glass-button:active {
+    transform: translateY(0);
+}
+
+.fluid-glass-panel {
+    background: rgba(20, 5, 30, 0.25);
+    border: 1px solid rgba(168, 85, 247, 0.2);
+    box-shadow:
+        0 8px 32px rgba(82, 39, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    padding: 1.5rem;
+}
+
+.fluid-glass-input {
+    background: rgba(30, 10, 50, 0.3);
+    border: 1.5px solid rgba(168, 85, 247, 0.25);
+    box-shadow:
+        0 4px 12px rgba(168, 85, 247, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    padding: 0.75rem 1rem;
+}
+
+.fluid-glass-input:focus-within {
+    border-color: rgba(168, 85, 247, 0.5);
+    box-shadow:
+        0 6px 24px rgba(168, 85, 247, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+.fluid-glass-gradient {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.3) 0%, rgba(192, 132, 252, 0.25) 100%);
+    border: 1.5px solid rgba(192, 132, 252, 0.3);
+    box-shadow:
+        0 6px 24px rgba(168, 85, 247, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.fluid-glass-subtle {
+    background: rgba(30, 10, 50, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.15);
+    box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Hover Effects for Interactive Elements */
+.fluid-glass-card:hover,
+.fluid-glass-panel:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 16px 48px rgba(168, 85, 247, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+/* Animated Shimmer Effect */
+.fluid-glass::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.fluid-glass:hover::before {
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .fluid-glass-blur-heavy {
+        backdrop-filter: blur(25px) saturate(180%) brightness(1.15);
+        -webkit-backdrop-filter: blur(25px) saturate(180%) brightness(1.15);
+    }
+}

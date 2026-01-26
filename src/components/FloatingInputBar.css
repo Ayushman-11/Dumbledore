@@ -1,0 +1,47 @@
+/* Floating input bar styles */
+.floating-input-bar {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(90deg, #3a0d1a 60%, #a86e2f 100%);
+    padding: 12px 8px 16px 8px;
+    z-index: 1000;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.2);
+}
+
+.floating-input-bar input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 20px;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    margin-right: 8px;
+    background: #2d0a13;
+    color: #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.floating-input-bar button {
+    padding: 10px 18px;
+    border-radius: 20px;
+    border: none;
+    background: #a86e2f;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.floating-input-bar button:disabled {
+    background: #7a5a2f;
+    cursor: not-allowed;
+}
+
+.floating-input-bar button:hover:not(:disabled) {
+    background: #c98c3f;
+}
