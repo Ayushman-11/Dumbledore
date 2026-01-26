@@ -65,6 +65,8 @@ const formatAssistantResponse = (response = '') => {
  * Manages conversation state and handles user interactions
  */
 function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
+    const [abortController, setAbortController] = useState(null);
+    const [pendingAbort, setPendingAbort] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -100,12 +102,40 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
     /**
      * Handle sending a message
      */
+    // Retry logic for failed messages
+    const handleRetry = async (retryPayload) => {
+        if (!retryPayload || isLoading || pendingAbort) return;
+        setIsLoading(true);
+        setError(null);
+        const controller = new AbortController();
+        setAbortController(controller);
+        try {
+            const { userMessage, userAppended } = retryPayload;
+            const conversationHistory = formatConversationHistory(userAppended);
+            const response = await sendMessage(conversationHistory, userMessage.text, controller.signal);
+            const assistantMessage = {
+                id: Date.now() + 1,
+                sender: 'assistant',
+                text: formatAssistantResponse(response),
+                timestamp: new Date()
+            };
+            safeUpdateMessages([...userAppended, assistantMessage]);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setIsLoading(false);
+            setAbortController(null);
+            setPendingAbort(false);
+            inputRef.current?.focus();
+        }
+    };
+
     const handleSend = async () => {
         const trimmedInput = inputValue.trim();
 
         // Validate input
         if (!trimmedInput) return;
-        if (isLoading) return; // Prevent sending while loading
+        if (isLoading || pendingAbort) return; // Prevent sending while loading or aborting
 
         // Check rate limit cooldown
         const now = Date.now();
@@ -130,6 +160,8 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
         setInputValue('');
         setError(null);
         setIsLoading(true);
+        const controller = new AbortController();
+        setAbortController(controller);
 
         if (messages.length === 0 && typeof onUpdateMetadata === 'function') {
             const truncated = trimmedInput.length > 48 ? `${trimmedInput.slice(0, 45)}...` : trimmedInput;
@@ -144,7 +176,7 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
             const conversationHistory = formatConversationHistory(userAppended);
 
             // Call API
-            const response = await sendMessage(conversationHistory, trimmedInput);
+            const response = await sendMessage(conversationHistory, trimmedInput, controller.signal);
 
             // Create assistant message
             const assistantMessage = {
@@ -161,18 +193,24 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
             console.error('Error sending message:', err);
             setError(err.message);
 
-            // Show error as a special message
+            // Show error as a special message with retry payload
             const errorMessage = {
                 id: Date.now() + 1,
                 sender: 'assistant',
                 text: `*The connection to the academy wavers...*\n\n${err.message}`,
                 timestamp: new Date(),
-                isError: true
+                isError: true,
+                retryPayload: {
+                    userMessage,
+                    userAppended
+                }
             };
 
             safeUpdateMessages([...userAppended, errorMessage]);
         } finally {
             setIsLoading(false);
+            setAbortController(null);
+            setPendingAbort(false);
             inputRef.current?.focus();
         }
     };
@@ -216,6 +254,14 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
         }
     }, [inputValue, chatId]);
 
+    // Stop query handler
+    const handleStop = () => {
+        if (abortController) {
+            setPendingAbort(true);
+            abortController.abort();
+        }
+    };
+
     return (
         <div className="chat-container">
             {/* Messages Area */}
@@ -233,6 +279,7 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
                             <Message
                                 key={message.id}
                                 message={message}
+                                onRetry={message.isError ? handleRetry : undefined}
                             />
                         ))}
                     </>
@@ -260,10 +307,15 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
                     />
                     <button
                         className="send-button"
-                        onClick={handleSend}
-                        disabled={isLoading || !inputValue.trim()}
+                        onClick={isLoading ? handleStop : handleSend}
+                        disabled={pendingAbort || (!isLoading && !inputValue.trim())}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     >
-                        <span className="material-symbols-outlined send-icon">arrow_upward</span>
+                        {isLoading ? (
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M320-640v320-320Zm-80 400v-480h480v480H240Zm80-80h320v-320H320v320Z" /></svg>
+                        ) : (
+                            <span className="material-symbols-outlined send-icon">arrow_upward</span>
+                        )}
                     </button>
                 </div>
             </div>

@@ -77,6 +77,11 @@ function loadChatsFromSession() {
 }
 
 function App() {
+
+    // Fix: Define handleToggleSidebar to toggle sidebar open state
+    const handleToggleSidebar = () => {
+        setSidebarOpen(prev => !prev);
+    };
     const [chats, setChats] = useState(() => loadChatsFromSession());
     const [currentChatId, setCurrentChatId] = useState(() => {
         const loaded = loadChatsFromSession();
@@ -143,9 +148,17 @@ function App() {
 
 
 
+
     const handleMetadataUpdate = (chatId, updates) => {
         setChats(prev => prev.map(chat => (
             chat.id === chatId ? { ...chat, ...updates } : chat
+        )));
+    };
+
+    // Fix: Define handleMessagesChange to update messages for a chat
+    const handleMessagesChange = (chatId, updatedMessages) => {
+        setChats(prev => prev.map(chat => (
+            chat.id === chatId ? { ...chat, messages: updatedMessages, updatedAt: new Date().toISOString() } : chat
         )));
     };
 

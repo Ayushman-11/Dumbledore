@@ -30,9 +30,12 @@ Remember: "Power guided by wisdom protects; power without restraint destroys."
 /**
  * Configuration
  */
-const MODEL = 'deepseek/deepseek-chat';
-const API_ENDPOINT = 'https://openrouter.ai/api/v1/chat/completions';
-const API_KEY = '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';
+
+
+// Only use OpenRouter API configuration
+const MODEL = process.env.REACT_APP_MODEL;
+const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
+const API_KEY = process.env.REACT_APP_OPENROUTER_API_KEY;
 
 // Maximum number of messages to keep in history (to avoid token overflow)
 const MAX_HISTORY_LENGTH = 4; // Keep less history to lower token usage per call
@@ -48,7 +51,7 @@ const jitter = () => Math.floor(Math.random() * 400); // Small random jitter to 
  * @param {string} userMessage - The latest user input
  * @returns {Promise<string>} - The AI's response
  */
-export const sendMessage = async (conversationHistory, userMessage) => {
+export const sendMessage = async (conversationHistory, userMessage, abortSignal) => {
     // Validate API key
     if (!API_KEY) {
         throw new Error('API key not configured');
@@ -77,7 +80,8 @@ export const sendMessage = async (conversationHistory, userMessage) => {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${API_KEY}`
-                    }
+                    },
+                    signal: abortSignal
                 }
             );
 
@@ -106,6 +110,10 @@ export const sendMessage = async (conversationHistory, userMessage) => {
 
             throw new Error('The Headmaster remained silent. Please try again in a moment.');
         } catch (error) {
+            // Only treat as user stop if axios specifically throws due to abort
+            if (error.code === 'ERR_CANCELED' || (error.name === 'CanceledError')) {
+                throw new Error('Query stopped by user.');
+            }
             const isLastAttempt = attempt === MAX_RETRIES;
             if (error.response) {
                 const status = error.response.status;

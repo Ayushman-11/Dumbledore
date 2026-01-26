@@ -37,6 +37,16 @@
     align-self: flex-start;
 }
 
+/* Ensure error avatar matches assistant avatar size */
+.error-message .assistant-inline-avatar {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    align-self: flex-start;
+}
+
 /* Message Content */
 .message-content {
     flex: 1;
@@ -51,7 +61,8 @@
 .user-message .message-content {
     padding: 1rem 1.25rem;
     border-radius: 12px;
-    background: #2a0a13; /* deep burgundy from Hogwarts palette */
+    background: #2a0a13;
+    /* deep burgundy from Hogwarts palette */
     border: 1px solid #4a1c1c;
 }
 
@@ -71,6 +82,8 @@
     line-height: 1.7;
     font-size: 1rem;
     word-wrap: break-word;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
     color: #e5e5e5;
 }
 
@@ -115,6 +128,8 @@
     padding: 0.1em 0.4em;
     border-radius: 4px;
     font-size: 0.97em;
+    word-break: break-word;
+    white-space: pre-wrap;
 }
 
 .message-text pre {
@@ -124,6 +139,8 @@
     border-radius: 8px;
     overflow-x: auto;
     margin: 0.7em 0;
+    word-break: break-word;
+    white-space: pre-wrap;
 }
 
 .user-message .message-text {
@@ -167,20 +184,102 @@
     font-weight: 500;
 }
 
-/* Error message styling */
-.error-message .message-content {
-    background: #1b0a0a;
-    border-color: #4a1c1c;
+/* Error message styling to match AI message bubble */
+.error-message {
+    justify-content: flex-start;
 }
 
-.error-message .message-text {
-    color: #ffb3b3;
-    font-style: italic;
+.error-message .message-bubble {
+    max-width: 70%;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    border-radius: 12px;
+    background: #1b0a0a;
+    border: 1px solid #4a1c1c;
+    margin: 0.5em 0;
+    padding: 0.25rem 0;
+}
+
+.error-message .message-content {
+    flex: 1;
+    padding: 0.5em 1.25em;
+    border-radius: 8px;
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+    white-space: pre-line;
+}
+
+.error-message .retry-button {
+    margin: 0.5em 0 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.error-message .retry-button svg {
+    width: 20px;
+    height: 20px;
+    fill: #ffffff;
+    stroke: #ffffff;
+}
+
+/* Copy button for error messages */
+.error-message .copy-button {
+    margin: 0.5em 0 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.error-message .copy-button svg {
+    width: 20px;
+    height: 20px;
+    fill: #ffffff;
+    stroke: #ffffff;
 }
 
 /* Subtle paper edge effect for assistant messages */
 .assistant-message .message-content::after {
     display: none;
+}
+
+/* Action Buttons */
+.ai-action-buttons,
+.ai-action-buttons-inline {
+    display: flex;
+    gap: 8px;
+    margin-top: 0.25em;
+    align-items: center;
+    font-size: 18px;
+    padding-left: 0;
+}
+
+.ai-action-buttons-inline {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+}
+
+/* Retry/Copy button container in error messages */
+.error-message .retry-copy-row {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    align-items: center;
+    margin-left: 0;
 }
 
 /* Responsive Design */
