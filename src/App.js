@@ -120,9 +120,7 @@ function App() {
         }
     };
 
-    const handleToggleSidebar = () => {
-        setSidebarOpen(prev => !prev);
-    };
+
 
     const handleNewChat = () => {
         const emptyChat = chats.find(chat => !chat.messages || chat.messages.length === 0);
@@ -143,17 +141,7 @@ function App() {
         closeSidebarOnMobile();
     };
 
-    const handleMessagesChange = (chatId, nextMessages) => {
-        setChats(prev => prev.map(chat => (
-            chat.id === chatId
-                ? {
-                    ...chat,
-                    messages: typeof nextMessages === 'function' ? nextMessages(chat.messages) : nextMessages,
-                    updatedAt: new Date().toISOString()
-                }
-                : chat
-        )));
-    };
+
 
     const handleMetadataUpdate = (chatId, updates) => {
         setChats(prev => prev.map(chat => (
