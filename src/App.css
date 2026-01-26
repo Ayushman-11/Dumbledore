@@ -112,6 +112,7 @@
 .App {
     min-height: 100vh;
     display: flex;
+    flex-direction: row;
     background: radial-gradient(circle at 25% 15%, #6b0f1a 0%, #300208 38%, #090103 100%);
     color: #f8f3ec;
     position: relative;

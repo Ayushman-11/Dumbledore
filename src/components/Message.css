@@ -51,8 +51,7 @@
 .user-message .message-content {
     padding: 1rem 1.25rem;
     border-radius: 12px;
-    background: #2a0a13;
-    /* deep burgundy from Hogwarts palette */
+    background: #2a0a13; /* deep burgundy from Hogwarts palette */
     border: 1px solid #4a1c1c;
 }
 

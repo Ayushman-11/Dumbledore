@@ -1,9 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { sendMessage, formatConversationHistory } from './utils/api';
 import Sidebar from './components/Sidebar';
 import Chat from './components/Chat';
 import './App.css';
-import './components/FloatingInputBar.css';
 
 const generateChatId = () => `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
@@ -80,8 +78,6 @@ function loadChatsFromSession() {
 
 function App() {
     const [chats, setChats] = useState(() => loadChatsFromSession());
-    const [inputValue, setInputValue] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
     const [currentChatId, setCurrentChatId] = useState(() => {
         const loaded = loadChatsFromSession();
         return loaded[0]?.id;
@@ -148,78 +144,46 @@ function App() {
     };
 
     const handleMessagesChange = (chatId, nextMessages) => {
-        setChats(prev => prev.map(chat =>
+        setChats(prev => prev.map(chat => (
             chat.id === chatId
-                ? { ...chat, messages: nextMessages, updatedAt: new Date().toISOString() }
+                ? {
+                    ...chat,
+                    messages: typeof nextMessages === 'function' ? nextMessages(chat.messages) : nextMessages,
+                    updatedAt: new Date().toISOString()
+                }
                 : chat
-        ));
+        )));
     };
 
-
-    // Send a message and update chat state
-    const handleSendMessage = async (userInput) => {
-        if (!currentChat) return;
-        const trimmedInput = userInput.trim();
-        if (!trimmedInput) return;
-        setIsLoading(true);
-        const userMessage = {
-            id: Date.now(),
-            sender: 'user',
-            text: trimmedInput,
-            timestamp: new Date()
-        };
-        // Add user message
-        let updatedMessages = [...(currentChat.messages || []), userMessage];
-        setChats(prev => prev.map(chat =>
-            chat.id === currentChat.id
-                ? { ...chat, messages: updatedMessages, updatedAt: new Date().toISOString() }
-                : chat
-        ));
-        try {
-            const conversationHistory = formatConversationHistory(updatedMessages);
-            const response = await sendMessage(conversationHistory, trimmedInput);
-            const assistantMessage = {
-                id: Date.now() + 1,
-                sender: 'assistant',
-                text: response,
-                timestamp: new Date()
-            };
-            updatedMessages = [...updatedMessages, assistantMessage];
-            setChats(prev => prev.map(chat =>
-                chat.id === currentChat.id
-                    ? { ...chat, messages: updatedMessages, updatedAt: new Date().toISOString() }
-                    : chat
-            ));
-        } catch (err) {
-            const errorMessage = {
-                id: Date.now() + 1,
-                sender: 'assistant',
-                text: `*The connection to the academy wavers...*\n\n${err.message}`,
-                timestamp: new Date(),
-                isError: true
-            };
-            updatedMessages = [...updatedMessages, errorMessage];
-            setChats(prev => prev.map(chat =>
-                chat.id === currentChat.id
-                    ? { ...chat, messages: updatedMessages, updatedAt: new Date().toISOString() }
-                    : chat
-            ));
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // Update chat metadata (title/subtitle)
     const handleMetadataUpdate = (chatId, updates) => {
-        setChats(prev => prev.map(chat =>
-            chat.id === chatId
-                ? { ...chat, ...updates, updatedAt: new Date().toISOString() }
-                : chat
-        ));
+        setChats(prev => prev.map(chat => (
+            chat.id === chatId ? { ...chat, ...updates } : chat
+        )));
     };
 
     return (
-        <div className="app-container">
+        <div className="App">
+            {/* mobile-menu-toggle removed, replaced by appbar menu */}
+            {/* AppBar for mobile */}
+            {isMobileView && (
+                <header className="appbar">
+                    <button
+                        type="button"
+                        className="appbar-menu"
+                        onClick={handleToggleSidebar}
+                        aria-label="Open sidebar"
+                        aria-pressed={isSidebarOpen}
+                        style={{ visibility: isSidebarOpen ? 'hidden' : 'visible' }}
+                    >
+                        <span className="material-symbols-outlined">menu</span>
+                    </button>
+                    <div className="appbar-title">Dumbledore</div>
+                    {/* <div className="appbar-profile">
+                        <span className="appbar-pro">PRO</span>
+                        <img className="appbar-avatar" src="/avatar.png" alt="User avatar" />
+                    </div> */}
+                </header>
+            )}
             <Sidebar
                 onNewChat={handleNewChat}
                 chatHistory={chatHistory}
@@ -229,32 +193,22 @@ function App() {
                 onClose={closeSidebarOnMobile}
             />
             <Chat
-                chat={currentChat}
-                onSendMessage={handleSendMessage}
-                isLoading={isLoading}
-                onUpdateMetadata={handleMetadataUpdate}
+                chatId={currentChat?.id}
+                messages={currentChat?.messages || []}
+                onMessagesChange={(updatedMessages) => {
+                    if (currentChat) {
+                        handleMessagesChange(currentChat.id, updatedMessages);
+                    }
+                }}
+                onUpdateMetadata={(updates) => {
+                    if (currentChat) {
+                        handleMetadataUpdate(currentChat.id, updates);
+                    }
+                }}
             />
             {isMobileView && isSidebarOpen && (
                 <div className="sidebar-overlay visible" onClick={closeSidebarOnMobile} />
             )}
-
-            {/* Floating input bar */}
-            <form className="floating-input-bar" onSubmit={e => {
-                e.preventDefault();
-                if (inputValue.trim() && !isLoading) {
-                    handleSendMessage(inputValue);
-                    setInputValue("");
-                }
-            }}>
-                <input
-                    type="text"
-                    placeholder="Type your message..."
-                    value={inputValue}
-                    onChange={e => setInputValue(e.target.value)}
-                    disabled={isLoading}
-                />
-                <button type="submit" disabled={isLoading || !inputValue.trim()}>Send</button>
-            </form>
         </div>
     );
 }
