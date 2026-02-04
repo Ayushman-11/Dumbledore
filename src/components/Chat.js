@@ -57,14 +57,17 @@ const formatAssistantResponse = (response = '') => {
     if (!normalized) return '';
 
     const withCodeBlocks = wrapLooseCodeSnippets(normalized);
-    return withCodeBlocks.replace(/\n{3,}/g, '\n\n');
+    // Remove excessive blank lines (3+ newlines → 2 newlines max)
+    const tightened = withCodeBlocks.replace(/\n{3,}/g, '\n\n');
+    // Also clean up spaces before newlines
+    return tightened.replace(/ +\n/g, '\n');
 };
 
 /**
  * Main Chat Component
  * Manages conversation state and handles user interactions
  */
-function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
+function Chat({ chatId, messages = [], fileContext, onMessagesChange, onUpdateMetadata }) {
     const [abortController, setAbortController] = useState(null);
     const [pendingAbort, setPendingAbort] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -73,6 +76,7 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
     const lastRequestTime = useRef(0);
+    const autoSentRef = useRef(false);
     const MIN_REQUEST_INTERVAL = 10000; // Minimum 10 seconds between requests to avoid rate limits
 
     const safeUpdateMessages = (nextMessages) => {
@@ -86,7 +90,51 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
         setError(null);
         setIsLoading(false);
         lastRequestTime.current = 0;
+        autoSentRef.current = false;
     }, [chatId]);
+
+    /**
+     * Auto-send when programmatically added message (like CVE analysis)
+     */
+    useEffect(() => {
+        const shouldAutoSend = messages.length === 1 &&
+            messages[0].sender === 'user' &&
+            !isLoading &&
+            !abortController &&
+            !autoSentRef.current;
+
+        if (shouldAutoSend) {
+            autoSentRef.current = true;
+            const autoSendMessage = async () => {
+                setIsLoading(true);
+                const controller = new AbortController();
+                setAbortController(controller);
+
+                try {
+                    const conversationHistory = formatConversationHistory(messages);
+                    const persona = localStorage.getItem('persona') || 'dumbledore';
+                    const response = await sendMessage(conversationHistory, messages[0].text, controller.signal, persona);
+
+                    const assistantMessage = {
+                        id: Date.now() + 1,
+                        sender: 'assistant',
+                        text: formatAssistantResponse(response),
+                        timestamp: new Date()
+                    };
+
+                    safeUpdateMessages([...messages, assistantMessage]);
+                } catch (err) {
+                    console.error('Error auto-sending message:', err);
+                    setError(err.message);
+                } finally {
+                    setIsLoading(false);
+                    setAbortController(null);
+                }
+            };
+
+            autoSendMessage();
+        }
+    }, [messages, isLoading, abortController, safeUpdateMessages]);
 
     /**
      * Auto-scroll to bottom when new messages arrive
@@ -96,8 +144,11 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
     };
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages, isLoading]);
+        // Only auto-scroll when loading (typing indicator), not after response received
+        if (isLoading) {
+            scrollToBottom();
+        }
+    }, [isLoading]);
 
     /**
      * Handle sending a message
@@ -112,7 +163,8 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
         try {
             const { userMessage, userAppended } = retryPayload;
             const conversationHistory = formatConversationHistory(userAppended);
-            const response = await sendMessage(conversationHistory, userMessage.text, controller.signal);
+            const persona = localStorage.getItem('persona') || 'dumbledore';
+            const response = await sendMessage(conversationHistory, userMessage.text, controller.signal, persona);
             const assistantMessage = {
                 id: Date.now() + 1,
                 sender: 'assistant',
@@ -174,9 +226,16 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
         try {
             // Format conversation history for API
             const conversationHistory = formatConversationHistory(userAppended);
+            const persona = localStorage.getItem('persona') || 'dumbledore';
+
+            // Add file context to user message if available
+            let finalUserMessage = trimmedInput;
+            if (fileContext && messages.length === 0) {
+                finalUserMessage = `[File uploaded: ${fileContext.name} (${(fileContext.size / 1024).toFixed(1)} KB)]\n\nFile content:\n${fileContext.content}\n\n---\n\nUser question: ${trimmedInput}`;
+            }
 
             // Call API
-            const response = await sendMessage(conversationHistory, trimmedInput, controller.signal);
+            const response = await sendMessage(conversationHistory, finalUserMessage, controller.signal, persona);
 
             // Create assistant message
             const assistantMessage = {
@@ -269,9 +328,18 @@ function Chat({ chatId, messages = [], onMessagesChange, onUpdateMetadata }) {
                 {messages.length === 0 ? (
                     <div className="welcome-message">
                         <div className="welcome-greeting">
-                            <h1 className="greeting-title">Oleg, how can I help you today?</h1>
+                            {fileContext ? (
+                                <>
+                                    <h1 className="greeting-title">📄 {fileContext.name}</h1>
+                                    <p style={{ color: '#9ca3af', marginTop: '8px' }}>
+                                        File loaded ({(fileContext.size / 1024).toFixed(1)} KB). Ask me anything about this file!
+                                    </p>
+                                </>
+                            ) : (
+                                <h1 className="greeting-title">Oleg, how can I help you today?</h1>
+                            )}
                         </div>
-                        <QuickActions onActionClick={handleQuickAction} />
+                        {!fileContext && <QuickActions onActionClick={handleQuickAction} />}
                     </div>
                 ) : (
                     <>

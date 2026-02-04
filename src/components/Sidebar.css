@@ -133,6 +133,111 @@
     box-shadow: 0 16px 30px rgba(186, 107, 24, 0.45);
 }
 
+/* Secret Room Dropdown */
+.secret-room-container {
+    position: relative;
+    padding: 0.75rem 1rem;
+    margin-top: 1rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+
+.secret-room-trigger {
+    background: none;
+    border: none;
+    color: #f5e6d3;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0;
+    transition: color 0.2s ease;
+    width: 100%;
+    text-align: left;
+}
+
+.secret-room-trigger:hover {
+    color: #eba647;
+}
+
+.secret-room-trigger svg {
+    opacity: 0.6;
+}
+
+.secret-room-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    background: rgba(20, 4, 8, 0.98);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(201, 166, 70, 0.25);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(201, 166, 70, 0.1);
+    z-index: 100;
+    animation: dropdownSlide 0.18s ease-out;
+}
+
+@keyframes dropdownSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.dropdown-item {
+    width: 100%;
+    padding: 0.85rem 1.1rem;
+    border: none;
+    background: transparent;
+    color: #f5e6d3;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    font-size: 0.92rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    border-bottom: 1px solid rgba(201, 166, 70, 0.08);
+}
+
+.dropdown-item:last-child {
+    border-bottom: none;
+}
+
+.dropdown-item:hover {
+    background: linear-gradient(135deg, rgba(143, 27, 38, 0.25), rgba(235, 166, 71, 0.15));
+    color: #eba647;
+    padding-left: 1.25rem;
+}
+
+.dropdown-item svg {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    opacity: 0.85;
+    transition: all 0.15s ease;
+}
+
+.dropdown-item:hover svg {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+.dropdown-item span {
+    flex: 1;
+    letter-spacing: 0.01em;
+}
+
 .chat-history {
     flex: 1;
     overflow-y: auto;

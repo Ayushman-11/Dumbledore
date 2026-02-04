@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Chat from './components/Chat';
+import CVEExplorer from './components/CVEExplorer';
 import './App.css';
 import dumbledoreLogo from './assets/dumbledore_logo.png';
 
@@ -96,6 +97,26 @@ function App() {
     }, [chats]);
     const [isSidebarOpen, setSidebarOpen] = useState(getSidebarDefaultState);
     const [isMobileView, setIsMobileView] = useState(getIsMobileViewport);
+    const [showCVEExplorer, setShowCVEExplorer] = useState(false);
+    const [persona, setPersona] = useState(() => localStorage.getItem('persona') || 'dumbledore');
+
+    // Apply theme based on persona
+    useEffect(() => {
+        const root = document.documentElement;
+        if (persona === 'snape') {
+            root.style.setProperty('--bg-primary', '#000000');
+            root.style.setProperty('--bg-secondary', '#0a0a0a');
+            root.style.setProperty('--text-primary', '#00ff41');
+            root.style.setProperty('--text-secondary', '#00cc33');
+            root.style.setProperty('--accent-color', '#00ff41');
+        } else {
+            root.style.setProperty('--bg-primary', '');
+            root.style.setProperty('--bg-secondary', '');
+            root.style.setProperty('--text-primary', '');
+            root.style.setProperty('--text-secondary', '');
+            root.style.setProperty('--accent-color', '');
+        }
+    }, [persona]);
 
     useEffect(() => {
         const handleResize = () => {
@@ -142,9 +163,59 @@ function App() {
         closeSidebarOnMobile();
     };
 
+    const handleFileUpload = (file, content) => {
+        const newChat = createChatSession({
+            title: `📄 ${file.name}`,
+            subtitle: `${(file.size / 1024).toFixed(1)} KB`,
+            fileContext: {
+                name: file.name,
+                size: file.size,
+                content: content.slice(0, 12000)
+            }
+        });
+        setChats(prev => [newChat, ...prev]);
+        setCurrentChatId(newChat.id);
+        closeSidebarOnMobile();
+    };
+
     const handleSelectChat = (chatId) => {
         setCurrentChatId(chatId);
         closeSidebarOnMobile();
+    };
+
+    const handleDeleteChat = (chatId) => {
+        setChats(prev => {
+            const filtered = prev.filter(chat => chat.id !== chatId);
+            // If we deleted the current chat, switch to another one
+            if (currentChatId === chatId) {
+                const nextChat = filtered[0] || createChatSession();
+                if (filtered.length === 0) {
+                    setCurrentChatId(nextChat.id);
+                    return [nextChat];
+                }
+                setCurrentChatId(nextChat.id);
+            }
+            return filtered;
+        });
+    };
+
+    const handleCVEAnalysis = (prompt, cveId) => {
+        const newChat = createChatSession({
+            title: `CVE: ${cveId}`,
+            subtitle: 'CVE Analysis'
+        });
+        setChats(prev => [newChat, ...prev]);
+        setCurrentChatId(newChat.id);
+
+        // Add the prompt as initial message
+        setTimeout(() => {
+            handleMessagesChange(newChat.id, [{
+                id: Date.now(),
+                sender: 'user',
+                text: prompt,
+                timestamp: new Date()
+            }]);
+        }, 100);
     };
 
 
@@ -191,15 +262,21 @@ function App() {
             )}
             <Sidebar
                 onNewChat={handleNewChat}
+                onFileUpload={handleFileUpload}
+                onDeleteChat={handleDeleteChat}
+                onOpenCVE={() => setShowCVEExplorer(true)}
                 chatHistory={chatHistory}
                 currentChatId={currentChat?.id}
                 onSelectChat={handleSelectChat}
                 isOpen={isSidebarOpen}
                 onClose={closeSidebarOnMobile}
+                persona={persona}
+                onPersonaChange={setPersona}
             />
             <Chat
                 chatId={currentChat?.id}
                 messages={currentChat?.messages || []}
+                fileContext={currentChat?.fileContext}
                 onMessagesChange={(updatedMessages) => {
                     if (currentChat) {
                         handleMessagesChange(currentChat.id, updatedMessages);
@@ -213,6 +290,12 @@ function App() {
             />
             {isMobileView && isSidebarOpen && (
                 <div className="sidebar-overlay visible" onClick={closeSidebarOnMobile} />
+            )}
+            {showCVEExplorer && (
+                <CVEExplorer
+                    onAnalyzeWithAI={handleCVEAnalysis}
+                    onClose={() => setShowCVEExplorer(false)}
+                />
             )}
         </div>
     );
